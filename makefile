@@ -1,5 +1,5 @@
 snake-master: main.o snake.o motion.o food.o score.o debug.o
-	gcc -o snake-master main.o snake.o motion.o food.o score.o debug.o `pkg-config --libs allegro-5 allegro_dialog-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5 allegro_image-5`
+	gcc -o snake-master main.o snake.o motion.o food.o score.o debug.o `pkg-config --libs allegro-5 allegro_dialog-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_audio-5 allegro_acodec-5`
 	
 main.o: main.c main.h snake.h motion.h food.h score.h debug.h color_names.h
 	gcc -c main.c -o main.o

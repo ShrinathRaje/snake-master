@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<allegro5/allegro_audio.h>
 
 #include "motion.h"
 #include "snake.h"
@@ -13,8 +14,12 @@ extern int m_deallocated;
 extern snake_part *s_head;
 extern snake_part *s_tail;
 
+extern ALLEGRO_SAMPLE *button_click;
+
 void record_turn_cors(int k_code)
 {
+	al_play_sample(button_click, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+	
 	turn_cors *i = NULL;
 
 	++m_allocated;

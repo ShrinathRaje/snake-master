@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<time.h>
 #include<allegro5/allegro_primitives.h>
+#include<allegro5/allegro_audio.h>
 
 #include "food.h"
 #include "main.h"
@@ -14,6 +15,7 @@ food f;
 extern snake_part *s_head;
 extern bool is_food_eaten;
 extern ALLEGRO_TIMER *food_timer;
+extern ALLEGRO_SAMPLE *food_eaten;
 
 /* provide food to snake */
 void feed_more(void)
@@ -55,6 +57,8 @@ void check_if_food_is_eaten(void)
 	if(s_head->sx <= f.sx + f.r_small && s_head->sx >= f.sx - f.r_small)
 		if(s_head->sy <= f.sy + f.r_small && s_head->sy >= f.sy - f.r_small)
 		{
+			al_play_sample(food_eaten, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+			
 			is_food_eaten = true;
 
 			append_snake_part();

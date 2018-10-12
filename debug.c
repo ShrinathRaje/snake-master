@@ -3,6 +3,7 @@
 
 #include<allegro5/allegro_native_dialog.h>
 #include<allegro5/allegro_font.h>
+#include<allegro5/allegro_audio.h>
 
 #include "debug.h"
 #include "snake.h"
@@ -17,6 +18,11 @@ extern ALLEGRO_EVENT_QUEUE *event_queue;
 extern ALLEGRO_FONT *font;
 extern ALLEGRO_BITMAP *icon;
 extern ALLEGRO_DISPLAY *display;
+
+extern ALLEGRO_SAMPLE *button_click;
+extern ALLEGRO_SAMPLE *food_eaten;
+extern ALLEGRO_SAMPLE *bg_music;
+extern ALLEGRO_SAMPLE *snake_collision;
 
 extern snake_part *s_head;
 extern turn_cors *t_head;
@@ -50,6 +56,8 @@ void cleanup(void)
 
 	if(display)
 		al_destroy_display(display);
+		
+	destroy_sound();
 
 	if(s_head)
 		destroy_snake();
@@ -67,4 +75,19 @@ void cleanup(void)
 
 	printf("Done!\n");
 	printf("\nGAME OVER!\n");
+}
+
+void destroy_sound(void)
+{
+	if(bg_music)
+		al_destroy_sample(bg_music);
+		
+	if(button_click)
+		al_destroy_sample(button_click);
+		
+	if(food_eaten)
+		al_destroy_sample(food_eaten);
+		
+	if(snake_collision)
+		al_destroy_sample(snake_collision);
 }

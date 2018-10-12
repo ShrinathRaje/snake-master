@@ -5,6 +5,8 @@
 #include<allegro5/allegro_font.h>
 #include<allegro5/allegro_ttf.h>
 #include<allegro5/allegro_image.h>
+#include<allegro5/allegro_audio.h>
+#include<allegro5/allegro_acodec.h>
 
 #include "main.h"
 #include "snake.h"
@@ -22,6 +24,13 @@ ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 ALLEGRO_FONT *font = NULL;
 ALLEGRO_BITMAP *icon = NULL;
 
+/* for sound */
+ALLEGRO_SAMPLE *button_click = NULL;
+ALLEGRO_SAMPLE *food_eaten = NULL;
+ALLEGRO_SAMPLE *bg_music = NULL;
+ALLEGRO_SAMPLE *snake_collision = NULL;
+ALLEGRO_SAMPLE_ID bg_music_id;
+
 bool is_game_over = false;
 bool is_food_eaten = true;
 
@@ -30,6 +39,7 @@ extern snake_part *s_head;
 static void initialize_game(void);
 static void initialize_display(void);
 static void initialize_font(void);
+static void initialize_sound(void);
 static void draw_arena(void);
 static void game_loop(void);
 static void process_input_from_keyboard(ALLEGRO_EVENT *);
@@ -94,6 +104,8 @@ void initialize_game(void)
 	initialize_display();
 
 	initialize_font();
+	
+	initialize_sound();
 
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_timer_event_source(food_timer));
@@ -132,6 +144,23 @@ void initialize_font(void)
 		abort_game("Failed to load pirulen.ttf font");
 }
 
+void initialize_sound(void)
+{
+	if(!al_install_audio())
+		abort_game("Failed to initialize audion");
+
+	if(!al_init_acodec_addon())
+		abort_game("Failed to initialize audio codecs");
+
+	if(!al_reserve_samples(4))
+		abort_game("Failed to reserve samples\n");
+
+	bg_music = al_load_sample("sounds/bg_music.wav");
+	button_click = al_load_sample("sounds/button_click.wav");
+	food_eaten = al_load_sample("sounds/food_eaten.wav");
+	snake_collision = al_load_sample("sounds/snake_collision.wav");
+}
+
 void draw_arena(void)
 {
 	al_clear_to_color(BLACK_COLOR);
@@ -146,6 +175,8 @@ void game_loop(void)
 	srandom(time(0));
 
 	ALLEGRO_EVENT event;
+	
+	al_play_sample(bg_music, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &bg_music_id);
 
 	al_start_timer(timer);
 
@@ -168,6 +199,8 @@ void game_loop(void)
 				{
 					end_game = true;
 					is_game_over = true;
+					al_play_sample(snake_collision, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+					al_stop_sample(&bg_music_id);
 				}
 
 				check_if_food_is_eaten();
